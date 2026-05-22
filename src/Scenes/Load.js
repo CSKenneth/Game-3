@@ -4,88 +4,64 @@ class Load extends Phaser.Scene {
     }
 
     preload() {
+
+       
         this.load.setPath("./assets/");
 
-        // Load characters spritesheet
-        //this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
+        // Player
         this.load.image("platformer_characters", "fox.png");
 
-        // Load tilemap information
-        this.load.image("tilemap_tiles", "tilemap_packed.png");                         // Packed tilemap
-        this.load.image("food_tiles", "food_tilemap_packed.png"); 
-        this.load.image("industrial_tiles", "tilemap_packed1.png"); 
-        this.load.image("industrial_tiles2", "platformerPack_industrial_tilesheet.png"); 
-        this.load.image("city_tiles", "city_tilemap_packed.png"); 
+        // Textures
+        this.load.image("tilemap_tiles", "tilemap_packed.png");
+        this.load.image("food_tiles", "food_tilemap_packed.png");
+        this.load.image("industrial_tiles", "tilemap_packed1.png");
+        this.load.image("industrial_tiles2", "platformerPack_industrial_tilesheet.png");
+        this.load.image("city_tiles", "city_tilemap_packed.png");
 
-        this.load.image("food", "tile_0014.png");   
-        this.load.image("bed", "tile_0275.png");                     
-        
-        this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
-     
-        //Audio
+        // Objects
+        this.load.image("food", "tile_0014.png");
+        this.load.image("bed", "tile_0275.png");
+
+        // Loads Tilemaps
+        this.load.tilemapTiledJSON(
+            "platformer-level-1",
+            "platformer-level-1.tmj"
+        );
+
+        // Audio
         this.load.audio("coin_sfx", "switch_003.ogg");
         this.load.audio("jump_sfx", "bong_001.ogg");
 
-
-        // Load the tilemap as a spritesheet
+        // Tilemaps frame
         this.load.spritesheet("tilemap_sheet", "tilemap_packed.png", {
             frameWidth: 18,
             frameHeight: 18
         });
-        this.load.spritesheet("food_tiles", "food_tilemap_packed.png", {
-            frameWidth: 18,
-            frameHeight: 18
-        });
-         this.load.spritesheet("industrial", "tilemap_packed1.png", {
+
+        this.load.spritesheet("food_sheet", "food_tilemap_packed.png", {
             frameWidth: 18,
             frameHeight: 18
         });
 
-        // Oooh, fancy. A multi atlas is a texture atlas which has the textures spread
-        // across multiple png files, so as to keep their size small for use with
-        // lower resource devices (like mobile phones).
-        // kenny-particles.json internally has a list of the png files
-        // The multiatlas was created using TexturePacker and the Kenny
-        // Particle Pack asset pack.
+        this.load.spritesheet("industrial_sheet", "tilemap_packed1.png", {
+            frameWidth: 18,
+            frameHeight: 18
+        });
+
+        // Particles
         this.load.multiatlas("kenny-particles", "kenny-particles.json");
     }
 
     create() {
+
+        // random fixes
         this.anims.create({
-            key: 'walk',
-            frames: this.anims.generateFrameNames('platformer_characters', {
-                prefix: "tile_",
-                start: 0,
-                end: 1,
-                suffix: ".png",
-                zeroPad: 4
-            }),
-            frameRate: 15,
-            repeat: -1
+            key: "idle",
+            frames: [{ key: "platformer_characters" }]
         });
 
-        this.anims.create({
-            key: 'idle',
-            defaultTextureKey: "platformer_characters",
-            frames: [
-                { frame: "tile_0000.png" }
-            ],
-            repeat: -1
-        });
-
-        this.anims.create({
-            key: 'jump',
-            defaultTextureKey: "platformer_characters",
-            frames: [
-                { frame: "tile_0001.png" }
-            ],
-        });
-
-         // ...and pass to the next Scene
-         this.scene.start("platformerScene");
+        this.scene.start("platformerScene");
     }
 
-    // Never get here since a new scene is started in create()
-    update() {
-    }
+    update() {}
 }

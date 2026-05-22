@@ -5,31 +5,25 @@ class Platformer extends Phaser.Scene {
 
     init() {
 
-        // movement
         this.ACCELERATION = 700;
         this.DRAG = 1200;
         this.MAX_SPEED = 220;
         this.JUMP_VELOCITY = -450;
 
-        // gravity
         this.physics.world.gravity.y = 1500;
 
-        // camera
         this.SCALE = 2.0;
 
-        // jump system
         this.coyoteTime = 0;
         this.wasInAir = false;
         this.jumpCount = 0;
         this.maxJumps = 2;
 
-        // respawn safety
         this.isRespawning = false;
     }
 
     create() {
 
-        
         // Map
         this.map = this.add.tilemap("platformer-level-1", 18, 18, 45, 25);
 
@@ -68,7 +62,6 @@ class Platformer extends Phaser.Scene {
         my.sfx.coin = this.sound.add("coin_sfx", { volume: 0.5 });
         my.sfx.jump = this.sound.add("jump_sfx", { volume: 0.5 });
 
-
         // Bounds
         this.physics.world.setBounds(
             0,
@@ -77,8 +70,9 @@ class Platformer extends Phaser.Scene {
             this.map.heightInPixels
         );
 
-
-        // Player
+        // -----------------------------
+        // PLAYER (NO ANIMATIONS FIX)
+        // -----------------------------
         my.sprite.player = this.physics.add.sprite(100, 100, "platformer_characters");
 
         my.sprite.player.setOrigin(0.5);
@@ -89,8 +83,6 @@ class Platformer extends Phaser.Scene {
 
         this.physics.add.collider(my.sprite.player, this.groundLayer);
 
-
-        // Death
         this.physics.add.collider(
             my.sprite.player,
             this.death,
@@ -100,8 +92,7 @@ class Platformer extends Phaser.Scene {
             }
         );
 
-  
-        // Food Collectibles
+        // Food
         this.foods = this.map.createFromObjects("Objects", {
             name: "food",
             key: "food"
@@ -114,15 +105,12 @@ class Platformer extends Phaser.Scene {
             my.sprite.player,
             this.foodGroup,
             (player, food) => {
-
                 food.destroy();
                 my.sfx.coin.play();
             }
         );
 
-
-        // Bed Win Condition
-
+        // Bed
         this.bed = this.map.createFromObjects("Objects", {
             name: "bed",
             key: "bed"
@@ -135,7 +123,6 @@ class Platformer extends Phaser.Scene {
             my.sprite.player,
             this.bedGroup,
             () => {
-
                 this.physics.pause();
 
                 this.add.text(
@@ -150,22 +137,18 @@ class Platformer extends Phaser.Scene {
             }
         );
 
-
         // Input
-
         cursors = this.input.keyboard.createCursorKeys();
         this.rKey = this.input.keyboard.addKey("R");
 
-        // 🐛 DEBUG TOGGLE (D KEY)
+        // Debug toggle
         this.input.keyboard.on('keydown-D', () => {
-
             this.physics.world.drawDebug = !this.physics.world.drawDebug;
 
             if (this.physics.world.debugGraphic) {
                 this.physics.world.debugGraphic.clear();
             }
-
-        }, this);
+        });
 
         // Camera
         this.cameras.main.setBounds(
@@ -179,7 +162,7 @@ class Platformer extends Phaser.Scene {
         this.cameras.main.setDeadzone(10, 10);
         this.cameras.main.setZoom(this.SCALE);
 
-        // Walking Particles
+        // Particles
         my.vfx.walking = this.add.particles(
             0,
             0,
@@ -197,7 +180,6 @@ class Platformer extends Phaser.Scene {
 
         my.vfx.walking.stop();
 
-        // Jump Particles
         my.vfx.jump = this.add.particles(
             0,
             0,
@@ -212,12 +194,13 @@ class Platformer extends Phaser.Scene {
                 emitting: false
             }
         );
-        document.getElementById('description').innerHTML = '<h2>Movement: A/D <br> Movement: Left/Right/Up/Down Arrow Keys <br> Hitboxes: D <br> Restart: R <br> Goal: Make it to the box at the end to allow the fox to sleep<br> Made by Kenneth Tran <br> Email: ktran111@ucsc.edu</h2>' 
+
+        document.getElementById('description').innerHTML =
+            '<h2>Movement: Arrow Keys <br> D: Debug <br> R: Restart <br> Goal: Reach bed</h2>';
     }
 
     update() {
 
-        //Coyote Time
         if (my.sprite.player.body.blocked.down) {
             this.coyoteTime = 10;
             this.jumpCount = 0;
@@ -225,77 +208,51 @@ class Platformer extends Phaser.Scene {
             this.coyoteTime--;
         }
 
-        // Left
         if (cursors.left.isDown) {
-
             my.sprite.player.setAccelerationX(-this.ACCELERATION);
             my.sprite.player.setFlipX(false);
-
-            if (my.sprite.player.body.blocked.down) {
-                my.vfx.walking.start();
-            }
+            my.vfx.walking.start();
         }
 
-        // Right
         else if (cursors.right.isDown) {
-
             my.sprite.player.setAccelerationX(this.ACCELERATION);
             my.sprite.player.setFlipX(true);
-
-            if (my.sprite.player.body.blocked.down) {
-                my.vfx.walking.start();
-            }
+            my.vfx.walking.start();
         }
 
-        // Idle
         else {
             my.sprite.player.setAccelerationX(0);
             my.sprite.player.setDragX(this.DRAG);
             my.vfx.walking.stop();
         }
 
-        // CAMERA LOOK-AHEAD
         if (cursors.right.isDown) {
             this.cameras.main.setFollowOffset(-140, 0);
-        }
-        else if (cursors.left.isDown) {
+        } else if (cursors.left.isDown) {
             this.cameras.main.setFollowOffset(120, 0);
-        }
-        else {
+        } else {
             this.cameras.main.setFollowOffset(0, 0);
         }
 
-        // Jump
         if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
-
             if (this.coyoteTime > 0 || this.jumpCount < this.maxJumps) {
-
                 my.sprite.player.setVelocityY(this.JUMP_VELOCITY);
                 this.jumpCount++;
-
-                my.vfx.jump.emitParticleAt(
-                    my.sprite.player.x,
-                    my.sprite.player.y + 20
-                );
-
+                my.vfx.jump.emitParticleAt(my.sprite.player.x, my.sprite.player.y + 20);
                 my.sfx.jump.play();
             }
         }
 
-        // Restart
         if (Phaser.Input.Keyboard.JustDown(this.rKey)) {
             this.scene.restart();
         }
     }
 
-
-    // Respawn
     respawnPlayer() {
 
         this.isRespawning = true;
 
         my.sprite.player.setVelocity(0, 0);
-
         my.sprite.player.x = 100;
         my.sprite.player.y = 100;
 
