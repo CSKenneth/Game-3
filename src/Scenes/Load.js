@@ -7,13 +7,25 @@ class Load extends Phaser.Scene {
         this.load.setPath("./assets/");
 
         // Load characters spritesheet
-        this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
+        //this.load.atlas("platformer_characters", "tilemap-characters-packed.png", "tilemap-characters-packed.json");
+        this.load.image("platformer_characters", "1/fox.png");
 
         // Load tilemap information
         this.load.image("tilemap_tiles", "tilemap_packed.png");                         // Packed tilemap
-        this.load.image("food_tiles", "food_tilemap_packed.png");    
+        this.load.image("food_tiles", "food_tilemap_packed.png"); 
+        this.load.image("industrial_tiles", "tiles/tilemap_packed.png"); 
+        this.load.image("industrial_tiles2", "tiles/platformerPack_industrial_tilesheet.png"); 
+        this.load.image("city_tiles", "tiles/city_tilemap_packed.png"); 
+
+        this.load.image("food", "1/tile_0014.png");   
+        this.load.image("bed", "1/tile_0275.png");                     
+        
         this.load.tilemapTiledJSON("platformer-level-1", "platformer-level-1.tmj");   // Tilemap in JSON
-                       
+     
+        //Audio
+        this.load.audio("coin_sfx", "audio/switch_003.ogg");
+        this.load.audio("jump_sfx", "audio/bong_001.ogg");
+
 
         // Load the tilemap as a spritesheet
         this.load.spritesheet("tilemap_sheet", "tilemap_packed.png", {
@@ -21,6 +33,10 @@ class Load extends Phaser.Scene {
             frameHeight: 18
         });
         this.load.spritesheet("food_tiles", "food_tilemap_packed.png", {
+            frameWidth: 18,
+            frameHeight: 18
+        });
+         this.load.spritesheet("industrial", "Tiles/tilemap_packed.png", {
             frameWidth: 18,
             frameHeight: 18
         });
