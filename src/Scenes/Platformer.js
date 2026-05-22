@@ -18,7 +18,7 @@ class Platformer extends Phaser.Scene {
         this.PARTICLE_VELOCITY = 30;
 
         // camera
-        this.SCALE = 2.0;
+        this.SCALE = 3.0;
 
         // coyote time
         this.coyoteTime = 0;
@@ -45,14 +45,19 @@ class Platformer extends Phaser.Scene {
             25
         );
 
-        this.tileset = this.map.addTilesetImage(
+        this.tileset1 = this.map.addTilesetImage(
             "kenny_tilemap_packed",
             "tilemap_tiles"
         );
 
+        this.tileset2 = this.map.addTilesetImage(
+            "food_tilemap_packed",
+            "food_tiles"
+        );
+
         this.groundLayer = this.map.createLayer(
             "Ground-n-Platforms",
-            this.tileset,
+            [this.tileset1, this.tileset2],
             0,
             0
         );
@@ -293,8 +298,8 @@ class Platformer extends Phaser.Scene {
         );
 
         this.cameras.main.setDeadzone(
-            100,
-            50
+            10,
+            10
         );
 
         this.cameras.main.setZoom(this.SCALE);
